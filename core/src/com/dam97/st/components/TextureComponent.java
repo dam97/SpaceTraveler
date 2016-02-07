@@ -7,12 +7,8 @@ import com.badlogic.gdx.utils.Pool;
 /**
  * Created by dam97 on 2016-02-07.
  */
-public class TextureComponent implements Component ,Pool.Poolable {
+public class TextureComponent implements Component, Pool.Poolable {
     public TextureRegion textureRegion;
-
-    public TextureComponent(TextureRegion textureRegion) {
-        this.textureRegion = textureRegion;
-    }
 
     public TextureRegion getTextureRegion() {
         return textureRegion;
