@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.Pool;
 
 /**
  * Created by dam97 on 2016-02-07.
+ * Used to rendering things on 2D screen.
+ * Contains data for draw quad textures.
  */
 public class TransformComponent implements Component, Pool.Poolable {
     final Vector2 position = new Vector2(0f, 0f);
@@ -44,7 +46,10 @@ public class TransformComponent implements Component, Pool.Poolable {
         return rotation;
     }
 
-
+    /**
+     * Rotation of the object
+     * @param rotation Object render rotation in radians
+     */
     public void setRotation(float rotation) {
         this.rotation = rotation;
     }
@@ -60,7 +65,6 @@ public class TransformComponent implements Component, Pool.Poolable {
         Rectangle rectangle = new Rectangle(position.x - size.x * 0.5f, position.y - size.y * 0.5f, size.x, size.y);
         return rectangle;
     }
-
 
     @Override
     public void reset() {
