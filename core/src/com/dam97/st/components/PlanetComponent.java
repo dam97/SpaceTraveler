@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.Pool;
 public class PlanetComponent implements Component,Pool.Poolable {
     String name = "";
     float size = 0;
-    Vector3 position = new Vector3();
 
     public String getName() {
         return name;
@@ -28,18 +27,9 @@ public class PlanetComponent implements Component,Pool.Poolable {
         this.size = size;
     }
 
-    public Vector3 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector3 position) {
-        this.position = position;
-    }
-
     @Override
     public void reset() {
         size = 0;
         name = "";
-        position = new Vector3();
     }
 }
