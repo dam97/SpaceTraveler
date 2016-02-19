@@ -9,10 +9,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.dam97.st.components.ColorComponent;
-import com.dam97.st.components.SpriteComponent;
-import com.dam97.st.components.TextureComponent;
-import com.dam97.st.components.TransformComponent;
+import com.dam97.st.components.graphics.ColorComponent;
+import com.dam97.st.components.graphics.SpriteComponent;
+import com.dam97.st.components.graphics.TextureComponent;
+import com.dam97.st.components.graphics.TransformComponent;
 
 import java.util.Comparator;
 
