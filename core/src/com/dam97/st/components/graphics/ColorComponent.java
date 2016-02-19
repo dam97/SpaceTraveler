@@ -1,4 +1,4 @@
-package com.dam97.st.components;
+package com.dam97.st.components.graphics;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.graphics.Color;
