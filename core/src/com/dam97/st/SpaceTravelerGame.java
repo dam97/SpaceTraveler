@@ -9,12 +9,10 @@ import com.dam97.st.screens.MenuScreen;
 
 public class SpaceTravelerGame extends Game {
 	MenuScreen menuScreen;
-	SpriteBatch batch;
 	
 	@Override
 	public void create () {
 		Assets.load();
-		batch = new SpriteBatch();
 		menuScreen = new MenuScreen(this);
 		setScreen(menuScreen);
 	}

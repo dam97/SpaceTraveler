@@ -32,8 +32,8 @@ public class DataLoader {
         kryo.register(UUID.class, new UUIDSerializer());
         kryo.register(Array.class, new ArraySerializer());
         kryo.register(ImmutableArray.class, new ImmutableArraySerializer());
-        output = new Output();
-        input = new Input();
+        output = new Output(8);
+        input = new Input(8);
     }
 
     public static DataLoader getInstance() {

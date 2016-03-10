@@ -1,18 +1,17 @@
-package com.dam97.st.system;
+package com.dam97.st.artemis.systems;
 
-import com.badlogic.ashley.core.ComponentMapper;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
+import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.dam97.st.components.graphics.ColorComponent;
-import com.dam97.st.components.graphics.SpriteComponent;
-import com.dam97.st.components.graphics.TextureComponent;
-import com.dam97.st.components.graphics.TransformComponent;
+import com.dam97.st.artemis.components.graphics.ColorComponent;
+import com.dam97.st.artemis.components.graphics.SpriteComponent;
+import com.dam97.st.artemis.components.graphics.TextureComponent;
+import com.dam97.st.artemis.components.graphics.TransformComponent;
 
 import java.util.Comparator;
 
@@ -28,20 +27,18 @@ public class RenderingSystem extends IteratingSystem {
     private OrthographicCamera camera;
     private SpriteBatch batch;
 
-    private Array<Entity> renderQueue;
-    private Comparator<Entity> comparator;
+    private Array<Integer> renderQueue;
+    private Comparator<Integer> comparator;
 
     public RenderingSystem(SpriteBatch batch) {
-        super(Family.all(TransformComponent.class).one(SpriteComponent.class, TextureComponent.class).get());
-        textureMapper = ComponentMapper.getFor(TextureComponent.class);
+        super(Aspect.all(TransformComponent.class).one(SpriteComponent.class, TextureComponent.class));
+        /*textureMapper = ComponentMapper.getFor(TextureComponent.class);
         transformMapper = ComponentMapper.getFor(TransformComponent.class);
         spriteMapper = ComponentMapper.getFor(SpriteComponent.class);
-        colorMapper = ComponentMapper.getFor(ColorComponent.class);
+        colorMapper = ComponentMapper.getFor(ColorComponent.class);*/
 
-        renderQueue = new Array<Entity>();
-
+        renderQueue = new Array<Integer>();
         this.batch = batch;
-
         //camera = new OrthographicCamera(GameWorld.GAME_WIDTH, GameWorld.GAME_HEIGHT);
         //camera.position.x = GameWorld.GAME_WIDTH / 2;
         //camera.position.y = GameWorld.GAME_HEIGHT / 2;
@@ -51,29 +48,30 @@ public class RenderingSystem extends IteratingSystem {
         camera.position.y = 800 / 2;
 
 
-        comparator = new Comparator<Entity>() {
+        comparator = new Comparator<Integer>() {
             @Override
-            public int compare(Entity entityA, Entity entityB) {
-                return (int)Math.signum(transformMapper.get(entityB).getZIndex() -
-                        transformMapper.get(entityA).getZIndex());
+            public int compare(Integer entityA, Integer entityB) {
+                return (int)Math.signum(transformMapper.get(entityB).ZIndex -
+                        transformMapper.get(entityA).ZIndex);
             }
         };
     }
 
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+    protected void process(int entity) {
         renderQueue.add(entity);
     }
 
+
     @Override
-    public void update(float deltaTime) {
-        super.update(deltaTime);
+    protected void end() {
+        super.end();
         renderQueue.sort(comparator);
 
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        for (Entity entity : renderQueue) {
+        for (int entity : renderQueue) {
             if (textureMapper.has(entity)) {
                 if(!textureRegionDraw(entity)) continue;
             } else if (spriteMapper.has(entity)) {
@@ -85,10 +83,10 @@ public class RenderingSystem extends IteratingSystem {
         renderQueue.clear();
     }
 
-    private boolean textureRegionDraw(Entity entity) {
+    private boolean textureRegionDraw(int entity) {
         TextureComponent textureComponent = textureMapper.get(entity);
 
-        if (textureComponent.getTextureRegion() == null) {
+        if (textureComponent.textureRegion == null) {
             return false;
         }
         TransformComponent transformComponent = transformMapper.get(entity);
@@ -96,35 +94,35 @@ public class RenderingSystem extends IteratingSystem {
         float height = transformComponent.getBounds().height;
         float originX = transformComponent.getBounds().width * 0.5f;
         float originY = transformComponent.getBounds().height * 0.5f;
-        batch.draw(textureComponent.getTextureRegion(),
-                transformComponent.getPosition().x - originX, transformComponent.getPosition().y - originY,
+        batch.draw(textureComponent.textureRegion,
+                transformComponent.position.x - originX, transformComponent.position.y - originY,
                 originX, originY,
                 width, height,
-                transformComponent.getScale().x, transformComponent.getScale().y,
-                MathUtils.radiansToDegrees * transformComponent.getRotation());
+                transformComponent.scale.x, transformComponent.scale.y,
+                MathUtils.radiansToDegrees * transformComponent.rotation);
         return true;
     }
 
-    private boolean spriteDraw(Entity entity) {
+    private boolean spriteDraw(int entity) {
         SpriteComponent spriteComponent = spriteMapper.get(entity);
-        if(spriteComponent.getSprite() == null){
+        if(spriteComponent.sprite == null){
             return false;
         }
-        Sprite sprite = spriteComponent.getSprite();
+        Sprite sprite = spriteComponent.sprite;
 
 
         TransformComponent transformComponent = transformMapper.get(entity);
         float width = transformComponent.getBounds().width;
         float height = transformComponent.getBounds().height;
-        float originX = transformComponent.getBounds().width * transformComponent.getOrigin().x;
-        float originY = transformComponent.getBounds().height * transformComponent.getOrigin().y;
-        sprite.setPosition(transformComponent.getPosition().x - originX, transformComponent.getPosition().y - originY);
+        float originX = transformComponent.getBounds().width * transformComponent.origin.x;
+        float originY = transformComponent.getBounds().height * transformComponent.origin.y;
+        sprite.setPosition(transformComponent.position.x - originX, transformComponent.position.y - originY);
         sprite.setOrigin(originX, originY);
         sprite.setSize(width, height);
-        sprite.setScale(transformComponent.getScale().x, transformComponent.getScale().y);
-        sprite.setRotation(MathUtils.radiansToDegrees * transformComponent.getRotation());
+        sprite.setScale(transformComponent.scale.x, transformComponent.scale.y);
+        sprite.setRotation(MathUtils.radiansToDegrees * transformComponent.rotation);
         if(colorMapper.has(entity)){
-            sprite.setColor(colorMapper.get(entity).getColor());
+            sprite.setColor(colorMapper.get(entity).color);
         }
         sprite.draw(batch);
         return true;

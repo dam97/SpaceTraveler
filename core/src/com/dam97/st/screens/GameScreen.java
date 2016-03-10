@@ -1,29 +1,41 @@
 package com.dam97.st.screens;
 
-import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.Gdx;
+import com.artemis.World;
+import com.artemis.WorldConfiguration;
+import com.artemis.WorldConfigurationBuilder;
+import com.artemis.managers.WorldSerializationManager;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dam97.st.SpaceTravelerGame;
-import com.dam97.st.world.GameWorld;
+import com.dam97.st.artemis.systems.PlanetSystem;
+import com.dam97.st.artemis.systems.RenderingSystem;
+import com.dam97.st.artemis.world.GameWorld;
 
 /**
  * Created by dam97 on 2016-02-03.
  */
-public class GameScreen extends ScreenAdapter{
+public class GameScreen extends ScreenAdapter {
     SpaceTravelerGame game;
     GameWorld gameWorld;
-    PooledEngine engine;
+    World world;
 
     public GameScreen(SpaceTravelerGame game) {
         super();
         this.game = game;
-        engine = new PooledEngine();
-        gameWorld = new GameWorld(engine);
+        WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
+                .with(
+                        new RenderingSystem(new SpriteBatch()),
+                        new PlanetSystem())
+                .with(new WorldSerializationManager())
+                .build();
+        world = new World(worldConfiguration);
+        gameWorld = new GameWorld(world);
     }
 
     @Override
     public void render(float delta) {
-        engine.update(delta);
+        world.setDelta(delta);
+        world.process();
         super.render(delta);
     }
 

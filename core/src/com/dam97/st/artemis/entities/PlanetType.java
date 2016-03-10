@@ -1,4 +1,4 @@
-package com.dam97.st.entities;
+package com.dam97.st.artemis.entities;
 
 /**
  * Created by dam97 on 2016-02-20.
